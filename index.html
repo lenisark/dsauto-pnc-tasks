@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>팀 핵심 업무 정의 템플릿</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,'Segoe UI','Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;background:#F1F5F9;color:#1E293B;line-height:1.6;min-height:100vh}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1E293B 0%,#334155 55%,#475569 100%);color:#fff;padding:36px 32px 28px;position:relative}
+.hdr-bg{position:absolute;inset:0;background:radial-gradient(circle at 15% 50%,rgba(29,158,117,.18) 0%,transparent 45%),radial-gradient(circle at 85% 30%,rgba(83,74,183,.14) 0%,transparent 45%);pointer-events:none}
+.hdr-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hdr-text{flex:1;min-width:0}
+.hdr-title-row{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.hdr-text h1{font-size:1.65rem;font-weight:700;letter-spacing:-.3px;margin:0}
+.hdr-edit-btn{display:none;width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:.7rem;align-items:center;justify-content:center;transition:all .15s;font-family:inherit;padding:0}
+.hdr-edit-btn:hover{background:rgba(255,255,255,.22)}
+body.edit-mode .hdr-edit-btn{display:inline-flex}
+.hdr-text p{font-size:.86rem;opacity:.72;font-weight:300;margin:0 0 12px}
+.hdr-badges{display:flex;gap:6px;flex-wrap:wrap}
+.hbadge{font-size:.72rem;font-weight:500;padding:3px 11px;border-radius:20px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1)}
+.hbadge.source{background:rgba(34,197,94,.2);border-color:rgba(34,197,94,.4)}
+.hdr-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mode-toggle{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:20px;font-size:.78rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;transition:all .15s;font-family:inherit}
+.mode-toggle:hover{background:rgba(255,255,255,.18)}
+.mode-toggle.editing{background:#F59E0B;border-color:#F59E0B;color:#1E293B}
+.icon-btn{width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem;transition:all .15s}
+.icon-btn:hover{background:rgba(255,255,255,.18)}
+.menu-wrap{position:relative}
+.menu-pop{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.15);padding:6px;min-width:220px;display:none;z-index:500}
+.menu-pop.open{display:block}
+.menu-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;font-size:.8rem;color:#1E293B;cursor:pointer;border:0;background:transparent;width:100%;text-align:left;font-family:inherit}
+.menu-item:hover{background:#F1F5F9}
+.menu-item.danger{color:#DC2626}
+.mi-icon{flex-shrink:0;width:28px;height:28px;border-radius:6px;background:#F1F5F9;display:inline-flex;align-items:center;justify-content:center;color:#475569}
+.menu-item.danger .mi-icon{background:#FEE2E2;color:#DC2626}
+.mi-icon svg{width:15px;height:15px;display:block}
+.menu-divider{height:1px;background:#E2E8F0;margin:4px 0}
+.menu-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:#94A3B8;padding:6px 12px 4px;font-weight:600}
+
+/* SUMMARY BAR */
+.summary-bar{max-width:1100px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.sum-stats{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:.78rem;color:#475569}
+.sum-stat-item{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:6px;background:#fff;border:0.5px solid #E2E8F0;font-weight:500}
+.sum-stat-item b{font-weight:700;color:#1E293B}
+.sum-stat-item.s-core{background:#FEF5F5;border-color:#F4D5D5}
+.sum-stat-item.s-core b{color:#A32D2D}
+.sum-stat-item.s-key{background:#F5F4FD;border-color:#DDDBF6}
+.sum-stat-item.s-key b{color:#3C3489}
+.sum-stat-item.s-sup{background:#F7F6F1;border-color:#E5E2D7}
+.sum-stat-item.s-sup b{color:#5F5E5A}
+.sum-meta{font-size:.73rem;color:#94A3B8}
+
+/* WRAP */
+.wrap{max-width:1100px;margin:0 auto;padding:14px 24px 60px}
+
+/* NOTICE */
+.notice{background:#fff;border:0.5px solid #E2E8F0;border-radius:10px;padding:11px 16px;margin-bottom:14px;font-size:.78rem;color:#64748B;line-height:1.6;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.notice b{color:#1E293B;font-weight:600}
+.rank-chip{font-size:.7rem;padding:2px 8px;border-radius:4px;font-weight:600;display:inline-block;margin-right:5px}
+.rank-core{background:#FCEBEB;color:#A32D2D}
+.rank-key{background:#EEEDFE;color:#3C3489}
+.rank-sup{background:#F1EFE8;color:#5F5E5A}
+
+/* EDIT MODE BANNER */
+.edit-mode-banner{background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:9px 14px;margin-bottom:14px;font-size:.78rem;color:#92400E;display:none;align-items:center;gap:10px}
+.edit-mode-banner.on{display:flex}
+.edit-mode-banner .dot{width:7px;height:7px;border-radius:50%;background:#F59E0B;animation:pulse 1.5s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* DOMAIN */
+.domain-grid{display:flex;flex-direction:column;gap:12px}
+.domain{border:0.5px solid #E2E8F0;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:border-color .15s}
+body.edit-mode .domain{border-color:#FCD34D}
+.domain-hd{padding:13px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background .15s}
+.domain-hd:hover{background:#F8FAFC}
+.domain-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.domain-title{font-size:.95rem;font-weight:600;color:#1E293B;flex:1}
+.domain-count{font-size:.7rem;color:#64748B;background:#F1F5F9;padding:2px 8px;border-radius:10px}
+.domain-arrow{font-size:.85rem;color:#94A3B8;transition:transform .2s}
+.domain-arrow.open{transform:rotate(90deg)}
+.domain-edit-btns{display:none;gap:4px}
+body.edit-mode .domain-edit-btns{display:flex}
+.mini-btn{background:none;border:0.5px solid #CBD5E1;color:#475569;width:26px;height:26px;border-radius:5px;cursor:pointer;font-size:.72rem;display:inline-flex;align-items:center;justify-content:center;transition:all .12s;font-family:inherit}
+.mini-btn:hover{background:#F1F5F9;border-color:#94A3B8}
+.mini-btn.danger:hover{background:#FEE2E2;border-color:#DC2626;color:#DC2626}
+.domain-body{display:none;border-top:0.5px solid #E2E8F0}
+.domain-body.open{display:block}
+
+/* TASK LIST */
+.task-list{padding:8px 12px;display:flex;flex-direction:column;gap:4px}
+.task-wrap{display:flex;flex-direction:column;gap:0}
+.task-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .12s;border:0.5px solid transparent}
+.task-row:hover{background:#F8FAFC;border-color:#E2E8F0}
+.task-row.selected{background:#F8FAFC;border-color:#CBD5E1}
+.task-main{flex:1;min-width:0}
+.task-header{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:3px}
+.task-name{font-size:.9rem;font-weight:600;color:#1E293B;margin:0}
+.task-rank-label{font-size:.66rem;font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0;letter-spacing:.02em}
+.task-desc{font-size:.77rem;color:#64748B;margin:0;line-height:1.5}
+.task-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.tag{font-size:.67rem;padding:2px 7px;border-radius:4px;background:#F1F5F9;color:#475569}
+.task-edit-btns{display:none;gap:4px;align-self:center;flex-shrink:0}
+body.edit-mode .task-edit-btns{display:flex}
+
+/* DETAIL PANEL */
+.detail{margin:3px 0 6px;border:0.5px solid #E2E8F0;border-radius:8px;overflow:hidden;display:none;background:#F8FAFC}
+.detail.on{display:block}
+.detail-hd{padding:11px 16px;background:#fff;border-bottom:0.5px solid #E2E8F0}
+.detail-hd-title{font-size:.88rem;font-weight:700;color:#1E293B;margin:0 0 3px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.detail-hd-sub{font-size:.76rem;color:#64748B;margin:0;line-height:1.6}
+.detail-body{padding:13px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.dc-lbl{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748B;margin-bottom:6px}
+.dc-ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px}
+.dc-ul li{font-size:.77rem;color:#475569;padding:5px 9px 5px 18px;position:relative;background:#fff;border-radius:4px;line-height:1.5;border:0.5px solid #E2E8F0}
+.dc-ul li::before{content:'→';position:absolute;left:6px;color:#94A3B8;font-size:.66rem;top:6px}
+.dc-ul li.kv{padding-left:9px}
+.dc-ul li.kv::before{display:none}
+
+/* ADD BUTTONS */
+.add-task-btn,.add-domain-btn{display:none;width:100%;padding:9px;background:#fff;border:1px dashed #CBD5E1;border-radius:8px;color:#64748B;font-size:.78rem;cursor:pointer;margin-top:6px;transition:all .15s;font-family:inherit}
+.add-task-btn:hover,.add-domain-btn:hover{background:#F8FAFC;border-color:#64748B;color:#1E293B}
+body.edit-mode .add-task-btn,body.edit-mode .add-domain-btn{display:block}
+.add-domain-btn{margin-top:12px;padding:13px;font-size:.82rem}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;justify-content:center;align-items:center;z-index:1000;padding:16px}
+.modal-overlay.on{display:flex}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:620px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:slideUp .2s ease-out}
+@keyframes slideUp{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-hd{padding:18px 22px;border-bottom:1px solid #E2E8F0;display:flex;justify-content:space-between;align-items:center}
+.modal-hd h3{font-size:1rem;font-weight:700;color:#1E293B;margin:0}
+.modal-close{background:none;border:0;font-size:1.2rem;color:#94A3B8;cursor:pointer;width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.modal-close:hover{background:#F1F5F9;color:#1E293B}
+.modal-body{padding:18px 22px;overflow-y:auto;flex:1}
+.modal-ft{padding:14px 22px;border-top:1px solid #E2E8F0;display:flex;justify-content:flex-end;gap:8px;background:#F8FAFC}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.76rem;font-weight:600;color:#334155;margin-bottom:5px}
+.field .hint{font-size:.7rem;color:#94A3B8;font-weight:400;margin-left:4px}
+.field input[type="text"],.field textarea,.field select{width:100%;padding:8px 11px;border:1px solid #CBD5E1;border-radius:6px;font-size:.82rem;font-family:inherit;color:#1E293B;background:#fff;transition:border-color .12s}
+.field input[type="text"]:focus,.field textarea:focus,.field select:focus{outline:0;border-color:#64748B;box-shadow:0 0 0 3px rgba(100,116,139,.1)}
+.field textarea{resize:vertical;min-height:60px;line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.list-input-wrap{display:flex;flex-direction:column;gap:5px}
+.list-input-item{display:flex;gap:5px;align-items:center}
+.list-input-item input{flex:1}
+.list-input-item button{flex-shrink:0;width:28px;height:28px;border:0.5px solid #CBD5E1;background:#fff;border-radius:5px;cursor:pointer;color:#64748B;font-size:.85rem;display:inline-flex;align-items:center;justify-content:center;font-family:inherit}
+.list-input-item button:hover{background:#FEE2E2;color:#DC2626;border-color:#DC2626}
+.add-list-item-btn{align-self:flex-start;background:none;border:0;color:#475569;font-size:.75rem;cursor:pointer;padding:4px 0;text-decoration:underline;font-family:inherit;margin-top:2px}
+
+.btn{padding:8px 16px;border-radius:6px;font-size:.82rem;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:inherit;transition:all .12s}
+.btn-primary{background:#1E293B;color:#fff;border-color:#1E293B}
+.btn-primary:hover{background:#0F172A}
+.btn-secondary{background:#fff;color:#475569;border-color:#CBD5E1}
+.btn-secondary:hover{background:#F1F5F9;border-color:#94A3B8}
+.btn-danger{background:#fff;color:#DC2626;border-color:#FCA5A5}
+.btn-danger:hover{background:#FEE2E2;border-color:#DC2626}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#1E293B;color:#fff;padding:10px 20px;border-radius:20px;font-size:.8rem;z-index:2000;box-shadow:0 8px 24px rgba(0,0,0,.2);transition:transform .25s ease-out;opacity:0;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* FOOTER */
+.footer{text-align:center;padding:18px 36px;font-size:.74rem;color:#94A3B8;border-top:1px solid #E2E8F0;background:#fff}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .detail-body{grid-template-columns:1fr}
+  .hdr{padding:24px 18px 20px}
+  .hdr-inner{flex-direction:column}
+  .hdr-actions{width:100%}
+  .wrap{padding:12px 14px 40px}
+  .summary-bar{padding:12px 16px 0}
+  .field-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-bg"></div>
+  <div class="hdr-inner">
+    <div class="hdr-text">
+      <div class="hdr-title-row">
+        <h1 id="hdr-title">—</h1>
+        <button class="hdr-edit-btn" title="헤더 편집" onclick="openHeaderModal()">✎</button>
+      </div>
+      <p id="hdr-subtitle">—</p>
+      <div class="hdr-badges">
+        <span class="hbadge">Template v2.2</span>
+        <span class="hbadge" id="badge-domain-count">—</span>
+        <span class="hbadge" id="badge-task-count">—</span>
+        <span class="hbadge source" id="badge-source" style="display:none"></span>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <button class="mode-toggle" id="modeToggle" onclick="toggleEditMode()">
+        <span id="modeIcon">🔒</span><span id="modeLabel">보기 모드</span>
+      </button>
+      <div class="menu-wrap">
+        <button class="icon-btn" onclick="toggleMenu(event)" title="더보기">⋯</button>
+        <div class="menu-pop" id="menuPop">
+          <div class="menu-label">수동 공유 / 백업</div>
+          <button class="menu-item" onclick="exportJSON()"><span class="mi-icon"><svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 10.5a.75.75 0 0 1-.53-.22l-3-3a.75.75 0 1 1 1.06-1.06L7.25 8.19V2.75a.75.75 0 0 1 1.5 0v5.44l1.72-1.97a.75.75 0 0 1 1.06 1.06l-3 3a.75.75 0 0 1-.53.22z"/><path d="M2.75 11.5a.75.75 0 0 1 .75.75v.75c0 .14.11.25.25.25h8.5a.25.25 0 0 0 .25-.25v-.75a.75.75 0 0 1 1.5 0v.75c0 .97-.78 1.75-1.75 1.75h-8.5A1.75 1.75 0 0 1 2 13v-.75a.75.75 0 0 1 .75-.75z"/></svg></span>JSON 내보내기</button>
+          <button class="menu-item" onclick="triggerImport()"><span class="mi-icon"><svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 2a.75.75 0 0 1 .53.22l3 3a.75.75 0 1 1-1.06 1.06L8.75 4.81v5.44a.75.75 0 0 1-1.5 0V4.81L5.53 6.28a.75.75 0 1 1-1.06-1.06l3-3A.75.75 0 0 1 8 2z"/><path d="M2.75 11.5a.75.75 0 0 1 .75.75v.75c0 .14.11.25.25.25h8.5a.25.25 0 0 0 .25-.25v-.75a.75.75 0 0 1 1.5 0v.75c0 .97-.78 1.75-1.75 1.75h-8.5A1.75 1.75 0 0 1 2 13v-.75a.75.75 0 0 1 .75-.75z"/></svg></span>JSON 가져오기</button>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+          <div class="menu-divider"></div>
+          <button class="menu-item danger" onclick="resetToInitial()"><span class="mi-icon"><svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 3V1.5a.5.5 0 0 0-.8-.4l-3 2.25a.5.5 0 0 0 0 .8l3 2.25A.5.5 0 0 0 8 6V4.5a3.5 3.5 0 1 1-3.5 3.5.75.75 0 0 0-1.5 0 5 5 0 1 0 5-5z"/></svg></span>초기화 (편집 내용 삭제)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="summary-bar">
+  <div class="sum-stats" id="sumStats"></div>
+  <div class="sum-meta" id="sumMeta"></div>
+</div>
+
+<div class="wrap">
+
+  <div class="edit-mode-banner" id="editBanner">
+    <span class="dot"></span>
+    <span><b>편집 모드</b> 활성화. 헤더(제목/설명)와 각 영역·업무의 <b>✎·🗑</b> 버튼으로 수정할 수 있어요. 변경사항은 브라우저에 자동 저장됩니다.</span>
+  </div>
+
+  <div class="notice">
+    <b>업무 우선순위</b>
+    <span><span class="rank-chip rank-core">핵심</span>없으면 팀 존재이유 없음</span>
+    <span><span class="rank-chip rank-key">주요</span>정기적으로 해야 하는 업무</span>
+    <span><span class="rank-chip rank-sup">지원</span>요청 기반 처리 업무</span>
+  </div>
+
+  <div class="domain-grid" id="domainGrid"></div>
+
+  <button class="add-domain-btn" onclick="openDomainModal(null)">＋ 새 영역 추가</button>
+
+</div>
+
+<div class="footer">
+  팀 핵심 업무 정의 템플릿 · Template v2.2 · <span id="ftDate"></span> &nbsp;|&nbsp; 편집 모드로 바로 수정 · 같은 폴더의 data.json 자동 로드 지원
+</div>
+
+<!-- HEADER MODAL -->
+<div class="modal-overlay" id="headerModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hd">
+      <h3>헤더 편집</h3>
+      <button class="modal-close" onclick="closeModal('headerModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>제목 <span class="hint">*</span></label>
+        <input type="text" id="hm-title" placeholder="예: 우리 팀 핵심 업무 정의">
+      </div>
+      <div class="field">
+        <label>부제목 <span class="hint">영역 요약 · 조직명 등</span></label>
+        <input type="text" id="hm-subtitle" placeholder="예: 회사명 · 영역1 · 영역2 · 영역3">
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('headerModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveHeader()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- TASK MODAL -->
+<div class="modal-overlay" id="taskModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3 id="taskModalTitle">새 업무 추가</h3>
+      <button class="modal-close" onclick="closeModal('taskModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="tm-domain-id">
+      <input type="hidden" id="tm-task-id">
+      <div class="field-row">
+        <div class="field">
+          <label>업무명 <span class="hint">*</span></label>
+          <input type="text" id="tm-name" placeholder="예: 주간 회의 운영">
+        </div>
+        <div class="field">
+          <label>우선순위 <span class="hint">*</span></label>
+          <select id="tm-rank">
+            <option value="핵">핵심 업무</option>
+            <option value="주">주요 업무</option>
+            <option value="지">지원 업무</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>요약 설명 <span class="hint">카드에 표시되는 1~2줄</span></label>
+        <textarea id="tm-desc" placeholder="업무의 성격을 간단히 설명"></textarea>
+      </div>
+      <div class="field">
+        <label>상세 설명 <span class="hint">상세 패널에 표시</span></label>
+        <textarea id="tm-detail" placeholder="배경, 주의사항 등"></textarea>
+      </div>
+      <div class="field">
+        <label>주요 액션</label>
+        <div class="list-input-wrap" id="tm-actions"></div>
+        <button type="button" class="add-list-item-btn" onclick="addListItem('tm-actions','액션 항목')">+ 액션 추가</button>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>주담당</label>
+          <input type="text" id="tm-owner" placeholder="예: 팀장">
+        </div>
+        <div class="field">
+          <label>협업</label>
+          <input type="text" id="tm-collab" placeholder="예: 전체 팀원">
+        </div>
+      </div>
+      <div class="field">
+        <label>KPI</label>
+        <div class="list-input-wrap" id="tm-kpis"></div>
+        <button type="button" class="add-list-item-btn" onclick="addListItem('tm-kpis','KPI 항목')">+ KPI 추가</button>
+      </div>
+      <div class="field">
+        <label>태그 <span class="hint">쉼표로 구분 (예: 주간, 분기)</span></label>
+        <input type="text" id="tm-tags" placeholder="주간, 분기">
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-danger" id="tm-delete-btn" onclick="deleteTaskFromModal()" style="display:none">삭제</button>
+      <button class="btn btn-secondary" onclick="closeModal('taskModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveTask()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOMAIN MODAL -->
+<div class="modal-overlay" id="domainModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hd">
+      <h3 id="domainModalTitle">새 영역 추가</h3>
+      <button class="modal-close" onclick="closeModal('domainModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="dm-id">
+      <div class="field">
+        <label>영역명 <span class="hint">*</span></label>
+        <input type="text" id="dm-title" placeholder="예: 팀 운영 · 의사결정">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>아이콘 <span class="hint">이모지 1개</span></label>
+          <input type="text" id="dm-icon" placeholder="🎯" maxlength="4">
+        </div>
+        <div class="field">
+          <label>아이콘 배경색</label>
+          <select id="dm-color">
+            <option value="#FCEBEB">연핑크</option>
+            <option value="#EEEDFE">연보라</option>
+            <option value="#E6F1FB">연파랑</option>
+            <option value="#E1F5EE">연민트</option>
+            <option value="#FAEEDA">연베이지</option>
+            <option value="#F1EFE8">연회색</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-danger" id="dm-delete-btn" onclick="deleteDomainFromModal()" style="display:none">삭제</button>
+      <button class="btn btn-secondary" onclick="closeModal('domainModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveDomain()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// INITIAL DATA — 일반 샘플 데이터 (가상의 팀)
+// 같은 폴더에 data.json이 있으면 그것이 우선 로드됨.
+// 편집 모드 변경사항은 브라우저 저장소에 저장되며, 초기화 시 이 샘플(또는 data.json)로 복귀.
+// ============================================================
+const INITIAL_DATA = {
+  version: "1.0",
+  header: {
+    title: '우리 팀 핵심 업무 정의',
+    subtitle: '영역별 업무 · 우선순위 · 담당 · KPI 한눈에 보기 · 템플릿 샘플'
+  },
+  domains: [
+    {
+      id: 'd1',
+      title: '팀 운영 · 의사결정',
+      icon: '🎯',
+      color: '#FCEBEB',
+      tasks: [
+        { id: 't1-1', name: '주간 팀 회의 운영', rank: '핵',
+          desc: '매주 정기 회의 준비·진행·회의록 공유.',
+          detail: '팀의 싱크를 맞추는 기본 채널. 안건 수집부터 결정사항 문서화까지 책임.',
+          actions: ['안건 수집 (금요일까지)','아젠다 작성 및 사전 공유','회의 진행 및 기록','결정사항·액션아이템 당일 배포'],
+          owner: '팀장', collab: '전체 팀원',
+          kpis: ['회의 시간 60분 이내','결정사항 100% 공유','불참자 회의록 확인'],
+          tags: ['주간'] },
+        { id: 't1-2', name: '월간 회고 운영', rank: '주',
+          desc: 'KPT 형식의 월간 회고 진행 및 액션 추적.',
+          detail: '이번 달 좋았던 점·아쉬운 점·다음 달 시도할 것을 정리하고 공유.',
+          actions: ['회고 양식 배포','개인 회고 → 팀 회고 세션','액션 아이템 트래킹'],
+          owner: '팀장', collab: '전체 팀원',
+          kpis: ['월 1회 정기 진행','액션 아이템 이행률 70%+'],
+          tags: ['월간'] },
+        { id: 't1-3', name: '이슈 에스컬레이션', rank: '주',
+          desc: '중요 이슈 파악·상부 보고·의사결정 요청.',
+          detail: '팀 선에서 해결이 어려운 이슈를 빠르게 위로 올려 판단받는 프로세스.',
+          actions: ['이슈 분류 및 중대성 판단','1줄 요약 + 옵션 보고','의사결정 기한 합의'],
+          owner: '팀장', collab: '의사결정자',
+          kpis: ['이슈 탐지→보고 24시간 내','의사결정 지연 0건'],
+          tags: [] }
+      ]
+    },
+    {
+      id: 'd2',
+      title: '프로젝트 · 실행',
+      icon: '📋',
+      color: '#E1F5EE',
+      tasks: [
+        { id: 't2-1', name: '분기 OKR 수립·운영', rank: '핵',
+          desc: '분기별 목표 설정 · 체크인 · 결산.',
+          detail: '팀의 방향성을 정하고 정렬시키는 도구. 수립 → 중간 체크인 → 결산.',
+          actions: ['분기 시작 전 OKR 워크숍','월 1회 진척 체크인','분기 결산 및 다음 분기 연계'],
+          owner: '팀장', collab: '팀원 전체',
+          kpis: ['OKR 달성률 70%+','분기 타임라인 준수'],
+          tags: ['분기'] },
+        { id: 't2-2', name: '프로젝트 진척 관리', rank: '핵',
+          desc: '진행 중 프로젝트 상태 추적 · 리스크 관리.',
+          detail: '모든 프로젝트의 상태를 한눈에 보고, 지연·리스크를 사전에 대응.',
+          actions: ['프로젝트 보드 운영','주간 상태 업데이트','리스크 사전 식별 및 대응'],
+          owner: '프로젝트 리드', collab: '팀장',
+          kpis: ['프로젝트 지연 < 10%','리스크 사전 식별률'],
+          tags: [] },
+        { id: 't2-3', name: '업무 우선순위 조정', rank: '주',
+          desc: '신규 요청 vs 기존 업무 조율.',
+          detail: '예상치 못한 요청 발생 시 기존 업무와의 우선순위를 명확히 정리.',
+          actions: ['요청 접수 창구 일원화','영향도 · 긴급도 평가','기존 업무 재배치 결정'],
+          owner: '팀장', collab: '요청자',
+          kpis: ['요청 응답 1 영업일 이내'],
+          tags: [] }
+      ]
+    },
+    {
+      id: 'd3',
+      title: '팀원 성장 · 피드백',
+      icon: '🌱',
+      color: '#E6F1FB',
+      tasks: [
+        { id: 't3-1', name: '1:1 미팅 운영', rank: '핵',
+          desc: '팀원과 정기 1:1 · 성장 대화.',
+          detail: '업무 점검을 넘어 팀원의 성장·커리어·웰빙까지 다루는 정기 대화.',
+          actions: ['격주 또는 월 1회 정기 일정','어젠다 공동 작성','액션 아이템 기록 및 트래킹'],
+          owner: '팀장', collab: '각 팀원',
+          kpis: ['정기 일정 준수율','팀원 만족도'],
+          tags: ['격주/월간'] },
+        { id: 't3-2', name: '성과 피드백 · 평가', rank: '핵',
+          desc: '반기·연간 성과 피드백 및 평가 진행.',
+          detail: '공정하고 투명한 평가로 팀원 성장 방향 제시.',
+          actions: ['자기평가 수집','평가 작성','평가 면담 진행','결과 문서화'],
+          owner: '팀장', collab: '팀원, HR',
+          kpis: ['기한 내 완료','면담 100% 진행'],
+          tags: ['반기·연간'] },
+        { id: 't3-3', name: '교육 · 역량 개발 지원', rank: '주',
+          desc: '팀원 교육 계획 수립 · 예산 관리.',
+          detail: '개인별 성장 계획에 따라 교육·컨퍼런스·도서 등 지원.',
+          actions: ['개인별 성장 계획 수립','교육 예산 관리','교육 효과 리뷰'],
+          owner: '팀장', collab: 'HR',
+          kpis: ['예산 집행률','역량 향상 평가'],
+          tags: [] }
+      ]
+    },
+    {
+      id: 'd4',
+      title: '문서화 · 지식 관리',
+      icon: '📚',
+      color: '#FAEEDA',
+      tasks: [
+        { id: 't4-1', name: '업무 문서 관리 기준', rank: '주',
+          desc: '저장 위치·파일명 규칙·버전 관리.',
+          detail: '필요한 정보를 빠르게 찾을 수 있도록 문서 관리 체계 운영.',
+          actions: ['폴더 구조 정의','파일명 규칙 공지','분기 1회 문서 정리'],
+          owner: '팀장', collab: '전체 팀원',
+          kpis: ['파일명 규칙 준수율','문서 검색 시간 단축'],
+          tags: [] },
+        { id: 't4-2', name: '지식 공유 체계', rank: '지',
+          desc: '프로젝트 회고 문서화 · 팀 자산화.',
+          detail: '프로젝트 경험이 개인에만 남지 않고 팀 자산이 되도록 문서화.',
+          actions: ['프로젝트 종료 후 회고 문서','월간 지식 공유 세션','문서 인덱스 관리'],
+          owner: '프로젝트 리드', collab: '팀장',
+          kpis: ['프로젝트 회고 문서화율'],
+          tags: [] }
+      ]
+    },
+    {
+      id: 'd5',
+      title: '외부 협업',
+      icon: '🤝',
+      color: '#EEEDFE',
+      tasks: [
+        { id: 't5-1', name: '타 부서 협업 조율', rank: '주',
+          desc: '인접 부서 정기 싱크 · 이슈 해결.',
+          detail: '팀 간 경계에 놓인 업무의 협업 채널 운영.',
+          actions: ['월 1회 부서간 정기 싱크','협업 이슈 에스컬레이션','합의사항 문서화'],
+          owner: '팀장', collab: '인접 부서 리드',
+          kpis: ['협업 이슈 해결 시간'],
+          tags: [] },
+        { id: 't5-2', name: '외부 파트너 커뮤니케이션', rank: '지',
+          desc: '외주·공급사·파트너 소통 관리.',
+          detail: '외부 관계사 커뮤니케이션 창구를 명확히 하고 이슈 관리.',
+          actions: ['파트너 연락 창구 정리','정기 업데이트','계약·약속 이행 트래킹'],
+          owner: '담당자', collab: '팀장',
+          kpis: ['파트너 만족도','SLA 준수율'],
+          tags: [] }
+      ]
+    }
+  ]
+};
+
+// 스토리지 추상화 — Claude Artifacts의 window.storage 또는 브라우저 localStorage 사용
+const storage = {
+  async get(key) {
+    // Artifacts 환경
+    if (typeof window !== 'undefined' && window.storage && typeof window.storage.get === 'function') {
+      try { return await window.storage.get(key); } catch (e) { return null; }
+    }
+    // 브라우저 localStorage
+    try {
+      const v = localStorage.getItem(key);
+      return v !== null ? { key, value: v } : null;
+    } catch (e) { return null; }
+  },
+  async set(key, value) {
+    if (typeof window !== 'undefined' && window.storage && typeof window.storage.set === 'function') {
+      try { return await window.storage.set(key, value); } catch (e) {}
+    }
+    try { localStorage.setItem(key, value); return { key, value }; }
+    catch (e) { throw e; }
+  },
+  async delete(key) {
+    if (typeof window !== 'undefined' && window.storage && typeof window.storage.delete === 'function') {
+      try { return await window.storage.delete(key); } catch (e) {}
+    }
+    try { localStorage.removeItem(key); return { key, deleted: true }; }
+    catch (e) {}
+  }
+};
+let data = JSON.parse(JSON.stringify(INITIAL_DATA));
+let dataSource = 'sample'; // 'sample' | 'file' | 'storage'
+let editMode = false;
+let openDomains = {};
+let currentDet = {};
+const STORAGE_KEY = 'team_coretasks_data';
+const STORAGE_META = 'team_coretasks_meta';
+
+// 구버전 데이터 마이그레이션 (header/version 없는 경우 기본값)
+function migrateData(d) {
+  if (!d.header) {
+    d.header = {
+      title: INITIAL_DATA.header.title,
+      subtitle: INITIAL_DATA.header.subtitle
+    };
+  }
+  if (!d.version) d.version = '1.0';
+  if (!d.domains) d.domains = [];
+  return d;
+}
+
+// 버전 비교 (semver-like: "1.2" > "1.1")
+function compareVersion(a, b) {
+  const pa = String(a || '0').split('.').map(n => parseInt(n) || 0);
+  const pb = String(b || '0').split('.').map(n => parseInt(n) || 0);
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i++) {
+    const x = pa[i] || 0, y = pb[i] || 0;
+    if (x > y) return 1;
+    if (x < y) return -1;
+  }
+  return 0;
+}
+
+// data.json 가져오기 시도
+async function tryLoadDataJson() {
+  try {
+    const res = await fetch('./data.json', { cache: 'no-cache' });
+    if (res.ok) {
+      const jsonData = await res.json();
+      if (jsonData && jsonData.domains) return migrateData(jsonData);
+    }
+  } catch (e) {}
+  return null;
+}
+
+async function loadData() {
+  // 저장소 데이터와 data.json 둘 다 먼저 조회
+  let storageData = null;
+  try {
+    const r = await storage.get(STORAGE_KEY);
+    if (r && r.value) storageData = migrateData(JSON.parse(r.value));
+  } catch (e) {}
+
+  const fileData = await tryLoadDataJson();
+
+  // Case 1: 저장소에 편집 내용 있음
+  if (storageData) {
+    // data.json 버전이 더 높으면 사용자에게 업그레이드 제안
+    if (fileData && compareVersion(fileData.version, storageData.version) > 0) {
+      const msg = '팀 공유 데이터에 새 버전이 있습니다.\n\n' +
+        '현재: v' + storageData.version + '\n' +
+        '새 버전: v' + fileData.version + '\n\n' +
+        '새 버전으로 업데이트할까요?\n' +
+        '(확인: 새 버전 불러오기 / 취소: 현재 편집 내용 유지)';
+      if (confirm(msg)) {
+        data = fileData;
+        dataSource = 'file';
+        console.log('[Template] Upgraded to data.json v' + fileData.version);
+        // 새 버전을 저장소에도 반영
+        try {
+          await storage.set(STORAGE_KEY, JSON.stringify(data));
+          const meta = { lastModified: new Date().toISOString() };
+          await storage.set(STORAGE_META, JSON.stringify(meta));
+          updateMetaDisplay(meta.lastModified);
+        } catch (e) {}
+        afterLoad();
+        return;
+      }
+    }
+    // 저장소 데이터 그대로 사용
+    data = storageData;
+    dataSource = 'storage';
+    console.log('[Template] Loaded from browser storage (v' + storageData.version + ')');
+    try {
+      const m = await storage.get(STORAGE_META);
+      if (m && m.value) updateMetaDisplay(JSON.parse(m.value).lastModified);
+    } catch (e) {}
+    afterLoad();
+    return;
+  }
+
+  // Case 2: 저장소 비어있음 → data.json 우선, 없으면 샘플
+  if (fileData) {
+    data = fileData;
+    dataSource = 'file';
+    console.log('[Template] Loaded from ./data.json (v' + fileData.version + ')');
+    afterLoad();
+    return;
+  }
+
+  data = JSON.parse(JSON.stringify(INITIAL_DATA));
+  dataSource = 'sample';
+  console.log('[Template] Using embedded sample data');
+  afterLoad();
+}
+
+function afterLoad() {
+  openDomains = { [data.domains[0]?.id]: true };
+  render();
+  updateSourceBadge();
+}
+
+function updateSourceBadge() {
+  const badge = document.getElementById('badge-source');
+  const ver = data.version ? ' · v' + data.version : '';
+  if (dataSource === 'storage') {
+    badge.textContent = '✎ 편집됨' + ver;
+    badge.style.display = 'inline-block';
+    badge.style.background = '';
+    badge.style.borderColor = '';
+  } else if (dataSource === 'file') {
+    badge.textContent = 'data.json' + ver;
+    badge.style.display = 'inline-block';
+    badge.style.background = '';
+    badge.style.borderColor = '';
+  } else {
+    badge.textContent = '샘플 데이터' + ver;
+    badge.style.display = 'inline-block';
+    badge.style.background = 'rgba(148,163,184,.2)';
+    badge.style.borderColor = 'rgba(148,163,184,.4)';
+  }
+}
+
+async function saveData() {
+  const meta = { lastModified: new Date().toISOString() };
+  try {
+    await storage.set(STORAGE_KEY, JSON.stringify(data));
+    await storage.set(STORAGE_META, JSON.stringify(meta));
+    updateMetaDisplay(meta.lastModified);
+    dataSource = 'storage';
+    updateSourceBadge();
+  } catch (e) {
+    showToast('저장 실패: ' + e.message);
+  }
+}
+
+function updateMetaDisplay(iso) {
+  if (!iso) { document.getElementById('sumMeta').textContent = ''; return; }
+  const d = new Date(iso);
+  const s = d.toLocaleString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+  document.getElementById('sumMeta').textContent = '마지막 수정: ' + s;
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function genId(prefix) {
+  return prefix + '_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+}
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function rankClsLabel(r) { return r === '핵' ? 'rank-core' : r === '주' ? 'rank-key' : 'rank-sup'; }
+function rankLabel(r) { return r === '핵' ? '핵심' : r === '주' ? '주요' : '지원'; }
+
+// ============================================================
+// RENDERING
+// ============================================================
+function render() {
+  // 헤더
+  document.getElementById('hdr-title').textContent = data.header?.title || '—';
+  document.getElementById('hdr-subtitle').textContent = data.header?.subtitle || '';
+
+  const grid = document.getElementById('domainGrid');
+  grid.innerHTML = '';
+
+  let totalTasks = 0, core = 0, key = 0, sup = 0;
+
+  data.domains.forEach(domain => {
+    totalTasks += domain.tasks.length;
+    domain.tasks.forEach(t => {
+      if (t.rank === '핵') core++;
+      else if (t.rank === '주') key++;
+      else sup++;
+    });
+
+    const isOpen = openDomains[domain.id];
+    const dEl = document.createElement('div');
+    dEl.className = 'domain';
+
+    dEl.innerHTML =
+      '<div class="domain-hd" onclick="toggleDomainBody(event,\'' + domain.id + '\')">' +
+        '<div class="domain-icon" style="background:' + domain.color + '">' + escapeHtml(domain.icon) + '</div>' +
+        '<span class="domain-title">' + escapeHtml(domain.title) + '</span>' +
+        '<span class="domain-count">' + domain.tasks.length + '개 업무</span>' +
+        '<div class="domain-edit-btns">' +
+          '<button class="mini-btn" title="영역 수정" onclick="event.stopPropagation();openDomainModal(\'' + domain.id + '\')">✎</button>' +
+          '<button class="mini-btn danger" title="영역 삭제" onclick="event.stopPropagation();deleteDomain(\'' + domain.id + '\')">🗑</button>' +
+        '</div>' +
+        '<span class="domain-arrow ' + (isOpen ? 'open' : '') + '" id="arr-' + domain.id + '">›</span>' +
+      '</div>' +
+      '<div class="domain-body ' + (isOpen ? 'open' : '') + '" id="' + domain.id + '">' +
+        '<div class="task-list">' +
+          domain.tasks.map(task => renderTaskWrap(domain.id, task)).join('') +
+          '<button class="add-task-btn" onclick="openTaskModal(\'' + domain.id + '\',null)">＋ 이 영역에 업무 추가</button>' +
+        '</div>' +
+      '</div>';
+
+    grid.appendChild(dEl);
+  });
+
+  document.getElementById('sumStats').innerHTML =
+    '<span class="sum-stat-item">총 <b>' + totalTasks + '</b>개 업무</span>' +
+    '<span class="sum-stat-item s-core">핵심 <b>' + core + '</b></span>' +
+    '<span class="sum-stat-item s-key">주요 <b>' + key + '</b></span>' +
+    '<span class="sum-stat-item s-sup">지원 <b>' + sup + '</b></span>';
+  document.getElementById('badge-domain-count').textContent = data.domains.length + '개 영역';
+  document.getElementById('badge-task-count').textContent = totalTasks + '개 업무';
+  document.getElementById('ftDate').textContent = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'});
+}
+
+function renderTaskWrap(domainId, task) {
+  const filteredTags = (task.tags || []).filter(t => !['핵심','주요','지원'].includes(t));
+  const tags = filteredTags.map(t => '<span class="tag">' + escapeHtml(t) + '</span>').join('');
+
+  return '<div class="task-wrap">' +
+    '<div class="task-row" onclick="showDetail(event,\'' + domainId + '\',\'' + task.id + '\')">' +
+      '<div class="task-main">' +
+        '<div class="task-header">' +
+          '<span class="task-name">' + escapeHtml(task.name) + '</span>' +
+          '<span class="task-rank-label ' + rankClsLabel(task.rank) + '">' + rankLabel(task.rank) + '</span>' +
+        '</div>' +
+        '<p class="task-desc">' + escapeHtml(task.desc) + '</p>' +
+        (tags ? '<div class="task-tags">' + tags + '</div>' : '') +
+      '</div>' +
+      '<div class="task-edit-btns">' +
+        '<button class="mini-btn" title="업무 수정" onclick="event.stopPropagation();openTaskModal(\'' + domainId + '\',\'' + task.id + '\')">✎</button>' +
+        '<button class="mini-btn danger" title="업무 삭제" onclick="event.stopPropagation();deleteTask(\'' + domainId + '\',\'' + task.id + '\')">🗑</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="detail" id="det-' + task.id + '"></div>' +
+  '</div>';
+}
+
+// ============================================================
+// INTERACTIONS
+// ============================================================
+function toggleDomainBody(e, id) {
+  if (editMode && (e.target.classList.contains('mini-btn') || e.target.closest('.mini-btn'))) return;
+  const body = document.getElementById(id);
+  const arr = document.getElementById('arr-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arr.classList.toggle('open', !isOpen);
+  openDomains[id] = !isOpen;
+}
+
+function showDetail(e, domainId, taskId) {
+  if (editMode) return;
+  const domain = data.domains.find(d => d.id === domainId);
+  if (!domain) return;
+  const task = domain.tasks.find(t => t.id === taskId);
+  if (!task) return;
+
+  const targetRow = e && e.currentTarget;
+  const det = document.getElementById('det-' + taskId);
+
+  if (currentDet[domainId] === taskId && det.classList.contains('on')) {
+    det.classList.remove('on');
+    currentDet[domainId] = null;
+    if (targetRow) targetRow.classList.remove('selected');
+    return;
+  }
+
+  Array.from(document.querySelectorAll('#' + domainId + ' .detail.on')).forEach(d => d.classList.remove('on'));
+  Array.from(document.querySelectorAll('#' + domainId + ' .task-row.selected')).forEach(r => r.classList.remove('selected'));
+
+  currentDet[domainId] = taskId;
+
+  const actionsHtml = (task.actions || []).map(a => '<li>' + escapeHtml(a) + '</li>').join('');
+  const kpisHtml = (task.kpis || []).map(k => '<li>' + escapeHtml(k) + '</li>').join('');
+
+  det.innerHTML =
+    '<div class="detail-hd">' +
+      '<p class="detail-hd-title">' + escapeHtml(task.name) + ' <span class="rank-chip ' + rankClsLabel(task.rank) + '">' + rankLabel(task.rank) + '</span></p>' +
+      '<p class="detail-hd-sub">' + escapeHtml(task.detail || task.desc) + '</p>' +
+    '</div>' +
+    '<div class="detail-body">' +
+      '<div><div class="dc-lbl">주요 액션</div><ul class="dc-ul">' + (actionsHtml || '<li>—</li>') + '</ul></div>' +
+      '<div><div class="dc-lbl">담당</div><ul class="dc-ul"><li class="kv"><b>주담당:</b> ' + escapeHtml(task.owner || '—') + '</li><li class="kv"><b>협업:</b> ' + escapeHtml(task.collab || '—') + '</li></ul></div>' +
+      '<div><div class="dc-lbl">평가 기준 (KPI)</div><ul class="dc-ul">' + (kpisHtml || '<li>—</li>') + '</ul></div>' +
+    '</div>';
+
+  det.classList.add('on');
+  if (targetRow) targetRow.classList.add('selected');
+}
+
+function toggleEditMode() {
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  document.getElementById('editBanner').classList.toggle('on', editMode);
+  const btn = document.getElementById('modeToggle');
+  btn.classList.toggle('editing', editMode);
+  document.getElementById('modeIcon').textContent = editMode ? '✏️' : '🔒';
+  document.getElementById('modeLabel').textContent = editMode ? '편집 모드' : '보기 모드';
+
+  if (editMode) {
+    document.querySelectorAll('.detail.on').forEach(d => d.classList.remove('on'));
+    document.querySelectorAll('.task-row.selected').forEach(r => r.classList.remove('selected'));
+    currentDet = {};
+  }
+}
+
+function toggleMenu(e) {
+  e.stopPropagation();
+  document.getElementById('menuPop').classList.toggle('open');
+}
+document.addEventListener('click', () => {
+  document.getElementById('menuPop').classList.remove('open');
+});
+
+// ============================================================
+// HEADER MODAL
+// ============================================================
+function openHeaderModal() {
+  document.getElementById('hm-title').value = data.header?.title || '';
+  document.getElementById('hm-subtitle').value = data.header?.subtitle || '';
+  document.getElementById('headerModal').classList.add('on');
+}
+
+async function saveHeader() {
+  const title = document.getElementById('hm-title').value.trim();
+  if (!title) { showToast('제목을 입력해주세요'); return; }
+  data.header = {
+    title: title,
+    subtitle: document.getElementById('hm-subtitle').value.trim()
+  };
+  await saveData();
+  closeModal('headerModal');
+  render();
+  showToast('헤더를 수정했습니다');
+}
+
+// ============================================================
+// TASK MODAL
+// ============================================================
+function openTaskModal(domainId, taskId) {
+  document.getElementById('tm-domain-id').value = domainId;
+  document.getElementById('tm-task-id').value = taskId || '';
+  const deleteBtn = document.getElementById('tm-delete-btn');
+
+  if (taskId) {
+    const domain = data.domains.find(d => d.id === domainId);
+    const task = domain.tasks.find(t => t.id === taskId);
+    document.getElementById('taskModalTitle').textContent = '업무 수정';
+    document.getElementById('tm-name').value = task.name || '';
+    document.getElementById('tm-rank').value = task.rank || '핵';
+    document.getElementById('tm-desc').value = task.desc || '';
+    document.getElementById('tm-detail').value = task.detail || '';
+    document.getElementById('tm-owner').value = task.owner || '';
+    document.getElementById('tm-collab').value = task.collab || '';
+    document.getElementById('tm-tags').value = (task.tags || []).join(', ');
+    renderListInput('tm-actions', task.actions || [], '액션 항목');
+    renderListInput('tm-kpis', task.kpis || [], 'KPI 항목');
+    deleteBtn.style.display = 'inline-block';
+  } else {
+    document.getElementById('taskModalTitle').textContent = '새 업무 추가';
+    document.getElementById('tm-name').value = '';
+    document.getElementById('tm-rank').value = '핵';
+    document.getElementById('tm-desc').value = '';
+    document.getElementById('tm-detail').value = '';
+    document.getElementById('tm-owner').value = '';
+    document.getElementById('tm-collab').value = '';
+    document.getElementById('tm-tags').value = '';
+    renderListInput('tm-actions', [''], '액션 항목');
+    renderListInput('tm-kpis', [''], 'KPI 항목');
+    deleteBtn.style.display = 'none';
+  }
+  document.getElementById('taskModal').classList.add('on');
+}
+
+function renderListInput(containerId, items, placeholder) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  if (items.length === 0) items = [''];
+  items.forEach(v => addListItemRow(container, v, placeholder));
+}
+
+function addListItemRow(container, value, placeholder) {
+  const row = document.createElement('div');
+  row.className = 'list-input-item';
+  row.innerHTML = '<input type="text" placeholder="' + placeholder + '" value="' + escapeHtml(value) + '"><button type="button" title="삭제">✕</button>';
+  row.querySelector('button').onclick = () => row.remove();
+  container.appendChild(row);
+}
+
+function addListItem(containerId, placeholder) {
+  addListItemRow(document.getElementById(containerId), '', placeholder);
+}
+
+function collectListInput(containerId) {
+  const inputs = document.querySelectorAll('#' + containerId + ' input');
+  return Array.from(inputs).map(i => i.value.trim()).filter(Boolean);
+}
+
+async function saveTask() {
+  const domainId = document.getElementById('tm-domain-id').value;
+  const taskId = document.getElementById('tm-task-id').value;
+  const name = document.getElementById('tm-name').value.trim();
+  if (!name) { showToast('업무명을 입력해주세요'); return; }
+
+  const tagsRaw = document.getElementById('tm-tags').value.trim();
+  const taskData = {
+    name: name,
+    rank: document.getElementById('tm-rank').value,
+    desc: document.getElementById('tm-desc').value.trim(),
+    detail: document.getElementById('tm-detail').value.trim(),
+    actions: collectListInput('tm-actions'),
+    owner: document.getElementById('tm-owner').value.trim(),
+    collab: document.getElementById('tm-collab').value.trim(),
+    kpis: collectListInput('tm-kpis'),
+    tags: tagsRaw ? tagsRaw.split(',').map(s => s.trim()).filter(Boolean) : []
+  };
+
+  const domain = data.domains.find(d => d.id === domainId);
+  if (taskId) {
+    const idx = domain.tasks.findIndex(t => t.id === taskId);
+    domain.tasks[idx] = { ...domain.tasks[idx], ...taskData };
+    showToast('업무를 수정했습니다');
+  } else {
+    taskData.id = genId('t');
+    domain.tasks.push(taskData);
+    openDomains[domainId] = true;
+    showToast('업무를 추가했습니다');
+  }
+
+  await saveData();
+  closeModal('taskModal');
+  render();
+}
+
+function deleteTaskFromModal() {
+  const domainId = document.getElementById('tm-domain-id').value;
+  const taskId = document.getElementById('tm-task-id').value;
+  if (taskId) deleteTask(domainId, taskId);
+  closeModal('taskModal');
+}
+
+async function deleteTask(domainId, taskId) {
+  const domain = data.domains.find(d => d.id === domainId);
+  const task = domain.tasks.find(t => t.id === taskId);
+  if (!confirm('「' + task.name + '」 업무를 삭제할까요?')) return;
+  domain.tasks = domain.tasks.filter(t => t.id !== taskId);
+  if (currentDet[domainId] === taskId) currentDet[domainId] = null;
+  await saveData();
+  render();
+  showToast('업무를 삭제했습니다');
+}
+
+// ============================================================
+// DOMAIN MODAL
+// ============================================================
+function openDomainModal(domainId) {
+  document.getElementById('dm-id').value = domainId || '';
+  const deleteBtn = document.getElementById('dm-delete-btn');
+
+  if (domainId) {
+    const domain = data.domains.find(d => d.id === domainId);
+    document.getElementById('domainModalTitle').textContent = '영역 수정';
+    document.getElementById('dm-title').value = domain.title;
+    document.getElementById('dm-icon').value = domain.icon;
+    document.getElementById('dm-color').value = domain.color;
+    deleteBtn.style.display = 'inline-block';
+  } else {
+    document.getElementById('domainModalTitle').textContent = '새 영역 추가';
+    document.getElementById('dm-title').value = '';
+    document.getElementById('dm-icon').value = '📁';
+    document.getElementById('dm-color').value = '#F1EFE8';
+    deleteBtn.style.display = 'none';
+  }
+  document.getElementById('domainModal').classList.add('on');
+}
+
+async function saveDomain() {
+  const domainId = document.getElementById('dm-id').value;
+  const title = document.getElementById('dm-title').value.trim();
+  if (!title) { showToast('영역명을 입력해주세요'); return; }
+
+  const domainData = {
+    title: title,
+    icon: document.getElementById('dm-icon').value.trim() || '📁',
+    color: document.getElementById('dm-color').value
+  };
+
+  if (domainId) {
+    const domain = data.domains.find(d => d.id === domainId);
+    Object.assign(domain, domainData);
+    showToast('영역을 수정했습니다');
+  } else {
+    domainData.id = genId('d');
+    domainData.tasks = [];
+    data.domains.push(domainData);
+    openDomains[domainData.id] = true;
+    showToast('영역을 추가했습니다');
+  }
+
+  await saveData();
+  closeModal('domainModal');
+  render();
+}
+
+function deleteDomainFromModal() {
+  const domainId = document.getElementById('dm-id').value;
+  if (domainId) deleteDomain(domainId);
+  closeModal('domainModal');
+}
+
+async function deleteDomain(domainId) {
+  const domain = data.domains.find(d => d.id === domainId);
+  const msg = domain.tasks.length > 0
+    ? '「' + domain.title + '」 영역과 그 안의 ' + domain.tasks.length + '개 업무를 모두 삭제할까요?'
+    : '「' + domain.title + '」 영역을 삭제할까요?';
+  if (!confirm(msg)) return;
+  data.domains = data.domains.filter(d => d.id !== domainId);
+  delete currentDet[domainId];
+  delete openDomains[domainId];
+  await saveData();
+  render();
+  showToast('영역을 삭제했습니다');
+}
+
+// ============================================================
+// MODAL / TOAST
+// ============================================================
+function closeModal(id) { document.getElementById(id).classList.remove('on'); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2200);
+}
+
+// ============================================================
+// IMPORT / EXPORT
+// ============================================================
+function exportJSON() {
+  document.getElementById('menuPop').classList.remove('open');
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const d = new Date();
+  const stamp = d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  a.href = url;
+  a.download = 'data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('data.json 파일을 내보냈습니다');
+}
+
+function triggerImport() {
+  document.getElementById('menuPop').classList.remove('open');
+  document.getElementById('importFile').click();
+}
+
+function importJSON(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (!imported.domains || !Array.isArray(imported.domains)) throw new Error('형식 오류');
+      if (!confirm('현재 데이터를 덮어쓰고 가져올까요?')) return;
+      data = migrateData(imported);
+      dataSource = 'storage';
+      openDomains = { [data.domains[0]?.id]: true };
+      currentDet = {};
+      await saveData();
+      render();
+      updateSourceBadge();
+      showToast('JSON을 가져왔습니다');
+    } catch (err) {
+      showToast('가져오기 실패: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+async function resetToInitial() {
+  document.getElementById('menuPop').classList.remove('open');
+  if (!confirm('브라우저에 저장된 편집 내용을 모두 지울까요?\n(data.json이 있으면 그 데이터로, 없으면 샘플로 복귀)')) return;
+
+  try {
+    await storage.delete(STORAGE_KEY);
+    await storage.delete(STORAGE_META);
+  } catch (e) {}
+
+  // data.json 재시도 → 없으면 샘플
+  let resetSource = 'sample';
+  try {
+    const res = await fetch('./data.json', { cache: 'no-cache' });
+    if (res.ok) {
+      const jsonData = await res.json();
+      if (jsonData && jsonData.domains) {
+        data = migrateData(jsonData);
+        resetSource = 'file';
+      }
+    }
+  } catch (e) {}
+
+  if (resetSource === 'sample') {
+    data = JSON.parse(JSON.stringify(INITIAL_DATA));
+  }
+
+  dataSource = resetSource;
+  openDomains = { [data.domains[0]?.id]: true };
+  currentDet = {};
+  document.getElementById('sumMeta').textContent = '';
+  render();
+  updateSourceBadge();
+  showToast(resetSource === 'file' ? 'data.json으로 복원되었습니다' : '샘플 데이터로 복원되었습니다');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+loadData();
+</script>
+</body>
+</html>
