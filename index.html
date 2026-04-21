@@ -658,7 +658,7 @@ async function loadData() {
 }
 
 function afterLoad() {
-  openDomains = { [data.domains[0]?.id]: true };
+  openDomains = {};
   render();
   updateSourceBadge();
 }
@@ -1169,7 +1169,7 @@ async function resetToInitial() {
   }
 
   dataSource = resetSource;
-  openDomains = { [data.domains[0]?.id]: true };
+  openDomains = {};
   currentDet = {};
   document.getElementById('sumMeta').textContent = '';
   render();
